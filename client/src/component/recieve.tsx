@@ -11,14 +11,14 @@ function Recieve() {
   const [history,setHistory] = useState<Products>([])
   
   const [voices, setVoices] = useState<Array<SpeechSynthesisVoice>>([]);
-
-  useEffect(()=>{
-    const utterance = new SpeechSynthesisUtterance("Hello, world!");
-    //utterance.text = "Hello, world!";      
-    console.log(window.speechSynthesis.getVoices())
+const speak = (text:string,v)=>{
+  const utterance = new SpeechSynthesisUtterance(text);   
+  utterance.voice = v;
+  window.speechSynthesis.speak(utterance);
+}
+useEffect(()=>{
     setVoices(window.speechSynthesis.getVoices())
-    utterance.voice = window.speechSynthesis.getVoices()[0];
-    window.speechSynthesis.speak(utterance);
+    
     let soc:Socket= io('http://192.168.19.1:3000')
     setSocket(soc)
     soc.on('recieve', (payload)=>{
@@ -31,12 +31,13 @@ function Recieve() {
   },[])
   useEffect(()=>{
     //console.log(history);
+    console.log(voices);
     
-  },[history])
+  },[history,voices])
   
 
   const onSubmit = (v:FormEventHandler) => {
-    console.log("Voices:", v);
+    speak(v.text,v.voices)
   };
   return (
     <div>
@@ -44,16 +45,13 @@ function Recieve() {
       <Card>
       <Form onFinish={onSubmit}>
         <Form.Item name="voices" label="Voices">
-        <Select  onChange={setVoices} options={voices.map((voice) => (voice?.name))}>
-
-            
-          </Select>
+        <Select options={voices.map((voice) => ({label:voice?.name,value:voice?.name}))} />
         </Form.Item>
-        <Form.Item label="Text">
+        <Form.Item label="Text" name={'text'}>
           <Input />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" onClick={onSubmit}>
+          <Button type="primary" htmlType="submit">
             Play
           </Button>
         </Form.Item>
