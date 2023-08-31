@@ -17,8 +17,13 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(socket);
+  console.log("connected");
+  socket.on("send",(socket)=>{
+    console.log(socket);
+    io.emit("recieve",socket)
+  });
 });
+
 
 
 server.listen(3000, () => {
