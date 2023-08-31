@@ -11,9 +11,9 @@ function Recieve() {
   const [history,setHistory] = useState<Products>([])
   
   const [voices, setVoices] = useState<Array<SpeechSynthesisVoice>>([]);
-const speak = (text:string,v)=>{
+const speak = (text:string,v:string)=>{
   const utterance = new SpeechSynthesisUtterance(text);   
-  utterance.voice = v;
+  utterance.voice = window.speechSynthesis.getVoices().filter(i=>i.name===v)[0]
   window.speechSynthesis.speak(utterance);
 }
 useEffect(()=>{
@@ -36,7 +36,7 @@ useEffect(()=>{
   },[history,voices])
   
 
-  const onSubmit = (v:FormEventHandler) => {
+  const onSubmit = (v:{text:string,voices:string}) => {
     speak(v.text,v.voices)
   };
   return (
@@ -45,7 +45,7 @@ useEffect(()=>{
       <Card>
       <Form onFinish={onSubmit}>
         <Form.Item name="voices" label="Voices">
-        <Select options={voices.map((voice) => ({label:voice?.name,value:voice?.name}))} />
+        <Select options={voices.map((voice) => ({label:voice?.name,value:voice?.voiceURI,}))} />
         </Form.Item>
         <Form.Item label="Text" name={'text'}>
           <Input />
