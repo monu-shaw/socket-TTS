@@ -6,7 +6,7 @@ import { Socket, SocketOptions, io } from 'socket.io-client';
 function Send() {
   const [socketT, setSocket] = useState<Socket>()
   useEffect(()=>{
-    let socket:Socket= io('http://192.168.19.1:3000')
+    let socket:Socket= io('http://192.168.43.2:3000')
     setSocket(socket)
     socket.on('disconnect', ()=>{console.log('dis')});
 

@@ -9,21 +9,26 @@ type Products = Array<{
 function Recieve() {
   const [socket, setSocket] = useState<Socket>()
   const [history,setHistory] = useState<Products>([])
+  const [currentVoice,setCurrentVoices] = useState<SpeechSynthesisVoice|String>()
   
   const [voices, setVoices] = useState<Array<SpeechSynthesisVoice>>([]);
-const speak = (text:string,v:string)=>{
+  const speak = (text:string,v:string|null)=>{
   const utterance = new SpeechSynthesisUtterance(text);   
-  utterance.voice = window.speechSynthesis.getVoices().filter(i=>i.name===v)[0]
+  utterance.voice = window.speechSynthesis.getVoices().filter(i=>i.voiceURI===v?v:currentVoice)[0]
   window.speechSynthesis.speak(utterance);
 }
 useEffect(()=>{
-    setVoices(window.speechSynthesis.getVoices())
+  let voi = window.speechSynthesis.getVoices();
+  console.log(voi);
+  
+    setVoices(voi)
+    setVoices(voi)
+    setCurrentVoices(voi[0]);
     
-    let soc:Socket= io('http://192.168.19.1:3000')
+    let soc:Socket= io('http://192.168.43.2:3000')
     setSocket(soc)
-    soc.on('recieve', (payload)=>{
+    soc.on('recieve', (payload)=>{ 
       setHistory(i=>[...i,...[JSON.parse(payload)]]);
-
     })
     return () => {
       soc.off('recieve', ()=>{console.log('dis')});
@@ -31,24 +36,23 @@ useEffect(()=>{
   },[])
   useEffect(()=>{
     //console.log(history);
-    console.log(voices);
-    
   },[history,voices])
   
 
   const onSubmit = (v:{text:string,voices:string}) => {
+    setCurrentVoices(v.voices)
     speak(v.text,v.voices)
   };
   return (
     <div>
-      <Row>
+      <Row justify={'center'}>
       <Card>
       <Form onFinish={onSubmit}>
         <Form.Item name="voices" label="Voices">
-        <Select options={voices.map((voice) => ({label:voice?.name,value:voice?.voiceURI,}))} />
+          <Select options={voices.map((voice) => ({label:voice?.name,value:voice?.voiceURI,}))} />
         </Form.Item>
         <Form.Item label="Text" name={'text'}>
-          <Input />
+          <Input.TextArea />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
