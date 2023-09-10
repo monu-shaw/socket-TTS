@@ -1,5 +1,4 @@
 import { Button, Col, Row, Space } from 'antd'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 function Home() {

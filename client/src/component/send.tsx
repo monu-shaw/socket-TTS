@@ -1,12 +1,13 @@
 import { Button, Card, Col, Form, Input, Row } from 'antd';
 import { FormItemInputProps } from 'antd/es/form/FormItemInput';
-import React, { useEffect, useState } from 'react'
-import { Socket, SocketOptions, io } from 'socket.io-client';
+import  { useEffect, useState } from 'react'
+import { Socket,  io } from 'socket.io-client';
+import { BaseRoute } from './rotes';
 
 function Send() {
   const [socketT, setSocket] = useState<Socket>()
   useEffect(()=>{
-    let socket:Socket= io('http://192.168.43.2:3000')
+    let socket:Socket= io(BaseRoute)
     setSocket(socket)
     socket.on('disconnect', ()=>{console.log('dis')});
 
